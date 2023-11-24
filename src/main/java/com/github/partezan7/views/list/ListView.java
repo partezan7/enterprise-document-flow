@@ -1,7 +1,9 @@
 package com.github.partezan7.views.list;
 
 import com.github.partezan7.data.entity.Contact;
+import com.github.partezan7.data.entity.user.Role;
 import com.github.partezan7.data.service.DocumentFlowService;
+import com.github.partezan7.security.SecurityService;
 import com.github.partezan7.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -20,15 +22,18 @@ import org.springframework.context.annotation.Scope;
 @Scope("prototype")
 @PermitAll
 @Route(value = "", layout = MainLayout.class)
-@PageTitle("Contacts | Vaadin CRM")
+@PageTitle("Документооборот")
 public class ListView extends VerticalLayout {
-    Grid<Contact> grid = new Grid<>(Contact.class);
-    TextField filterText = new TextField();
-    ContactForm form;
-    DocumentFlowService service;
+    final Grid<Contact> grid = new Grid<>(Contact.class);
+    private final TextField filterText = new TextField();
+    final ContactForm form;
+    private final DocumentFlowService service;
+    private final SecurityService securityService;
 
-    public ListView(DocumentFlowService service) {
+    public ListView(DocumentFlowService service, SecurityService securityService) {
         this.service = service;
+        this.securityService = securityService;
+        this.form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
         addClassName("list-view");
         setSizeFull();
         configureGrid();
@@ -49,7 +54,6 @@ public class ListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
         form.setWidth("25em");
         form.addSaveListener(this::saveContact); // <1>
         form.addDeleteListener(this::deleteContact); // <2>
@@ -91,7 +95,8 @@ public class ListView extends VerticalLayout {
         Button addContactButton = new Button("Добавить");
         addContactButton.addClickListener(click -> addContact());
 
-        var toolbar = new HorizontalLayout(filterText, addContactButton);
+        var toolbar = new HorizontalLayout(filterText);
+        if (securityService.isUserHaveRights(Role.ADMIN)) toolbar.add(addContactButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }

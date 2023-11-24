@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Collections;
+import java.util.Set;
 
 @EnableWebSecurity
 @Configuration
@@ -49,15 +50,20 @@ public class SecurityConfig extends VaadinWebSecurity {
         // if DB is empty then save default users to DB
         if (count == 0) {
             User user = new User();
-            user.setId(1L);
             user.setUsername("user");
             user.setPassword(getPasswordEncoder().encode("password"));
             user.setRoles(Collections.singleton(Role.USER));
             user.setActive(true);
             userRepository.save(user);
 
+            User userAdmin123 = new User();
+            userAdmin123.setUsername("123");
+            userAdmin123.setPassword(getPasswordEncoder().encode("password"));
+            userAdmin123.setRoles(Set.of(Role.USER, Role.ADMIN));
+            userAdmin123.setActive(true);
+            userRepository.save(userAdmin123);
+
             User admin = new User();
-            admin.setId(2L);
             admin.setUsername("admin");
             // password == "password"
             admin.setPassword("$2a$12$SqtwdNgRN2kE7L0ec4.8ze16Sd7mN.hMQ77fq0U461t8Ikkr2LhFa");

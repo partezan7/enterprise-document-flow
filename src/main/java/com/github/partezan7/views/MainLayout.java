@@ -24,8 +24,8 @@ public class MainLayout extends AppLayout {
     private void createHeader() {
         H1 logo = new H1("Документооборот");
         logo.addClassNames(
-            LumoUtility.FontSize.LARGE,
-            LumoUtility.Margin.MEDIUM);
+                LumoUtility.FontSize.LARGE,
+                LumoUtility.Margin.MEDIUM);
 
         String u = securityService.getAuthenticatedUser().getUsername();
         Button logout = new Button("Выйти из: " + u, e -> securityService.logout()); // <2>
@@ -36,16 +36,16 @@ public class MainLayout extends AppLayout {
         header.expand(logo); // <4>
         header.setWidthFull();
         header.addClassNames(
-            LumoUtility.Padding.Vertical.NONE,
-            LumoUtility.Padding.Horizontal.MEDIUM);
+                LumoUtility.Padding.Vertical.NONE,
+                LumoUtility.Padding.Horizontal.MEDIUM);
 
-        addToNavbar(header); 
+        addToNavbar(header);
 
     }
 
     private void createDrawer() {
         addToDrawer(new VerticalLayout(
-                new RouterLink("Список", ListView.class)
+                new RouterLink("Список сотрудников", ListView.class)
         ));
     }
 }

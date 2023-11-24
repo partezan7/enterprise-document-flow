@@ -1,6 +1,5 @@
 package com.github.partezan7.it.elements;
 
-import com.vaadin.flow.component.applayout.testbench.AppLayoutElement;
 import com.vaadin.flow.component.login.testbench.LoginFormElement;
 import com.vaadin.flow.component.orderedlayout.testbench.VerticalLayoutElement;
 import com.vaadin.testbench.annotations.Attribute;
@@ -8,7 +7,6 @@ import org.openqa.selenium.By;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 @Attribute(name = "class", contains = "login-view")
 public class LoginViewElement extends VerticalLayoutElement {
