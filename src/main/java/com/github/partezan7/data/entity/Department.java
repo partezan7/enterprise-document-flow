@@ -10,15 +10,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Entity
-public class Company extends AbstractEntity {
+public class Department extends AbstractEntity {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "department")
     @Nullable
-    private List<Contact> employees = new LinkedList<>();
+    private List<Employee> employees = new LinkedList<>();
 
-    @Formula("(select count(c.id) from Contact c where c.company_id = id)")
+    @Formula("(select count(c.id) from Employee c where c.department_id = id)")
     private int employeeCount;
 
     public String getName() {
@@ -29,15 +29,15 @@ public class Company extends AbstractEntity {
         this.name = name;
     }
 
-    public List<Contact> getEmployees() {
+    public List<Employee> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<Contact> employees) {
+    public void setEmployees(List<Employee> employees) {
         this.employees = employees;
     }
 
-    public int getEmployeeCount(){
+    public int getEmployeeCount() {
         return employeeCount;
     }
 }

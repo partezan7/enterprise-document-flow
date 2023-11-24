@@ -1,6 +1,6 @@
 package com.github.partezan7.views.list;
 
-import com.github.partezan7.data.entity.Contact;
+import com.github.partezan7.data.entity.Employee;
 import com.github.partezan7.data.entity.user.Role;
 import com.github.partezan7.data.service.DocumentFlowService;
 import com.github.partezan7.security.SecurityService;
@@ -18,22 +18,25 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
 
+/**
+ * Вкладка "Список сотрудников"
+ */
 @SpringComponent
 @Scope("prototype")
 @PermitAll
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Документооборот")
-public class ListView extends VerticalLayout {
-    final Grid<Contact> grid = new Grid<>(Contact.class);
+public class EmployeesListView extends VerticalLayout {
+    final Grid<Employee> grid = new Grid<>(Employee.class);
     private final TextField filterText = new TextField();
-    final ContactForm form;
+    final EmployeeForm form;
     private final DocumentFlowService service;
     private final SecurityService securityService;
 
-    public ListView(DocumentFlowService service, SecurityService securityService) {
+    public EmployeesListView(DocumentFlowService service, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
-        this.form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
+        this.form = new EmployeeForm(service.findAllCompanies(), service.findAllStatuses());
         addClassName("list-view");
         setSizeFull();
         configureGrid();
@@ -60,20 +63,20 @@ public class ListView extends VerticalLayout {
         form.addCloseListener(e -> closeEditor()); // <3>
     }
 
-    private void saveContact(ContactForm.SaveEvent event) {
+    private void saveContact(EmployeeForm.SaveEvent event) {
         service.saveContact(event.getContact());
         updateList();
         closeEditor();
     }
 
-    private void deleteContact(ContactForm.DeleteEvent event) {
+    private void deleteContact(EmployeeForm.DeleteEvent event) {
         service.deleteContact(event.getContact());
         updateList();
         closeEditor();
     }
 
     private void configureGrid() {
-        grid.addClassNames("contact-grid");
+        grid.addClassNames("employee-grid");
         grid.setSizeFull();
         grid.setColumns("firstName", "lastName", "email");
         grid.getColumns().get(0).setHeader("Имя");
@@ -87,7 +90,7 @@ public class ListView extends VerticalLayout {
     }
 
     private Component getToolbar() {
-        filterText.setPlaceholder("Найти по имени/фамилии...");
+        filterText.setPlaceholder("Найти по ФИО");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
@@ -101,11 +104,11 @@ public class ListView extends VerticalLayout {
         return toolbar;
     }
 
-    public void editContact(Contact contact) {
-        if (contact == null) {
+    public void editContact(Employee employee) {
+        if (employee == null) {
             closeEditor();
         } else {
-            form.setContact(contact);
+            form.setContact(employee);
             form.setVisible(true);
             addClassName("editing");
         }
@@ -119,7 +122,7 @@ public class ListView extends VerticalLayout {
 
     private void addContact() {
         grid.asSingleSelect().clear();
-        editContact(new Contact());
+        editContact(new Employee());
     }
 
 

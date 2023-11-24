@@ -1,34 +1,36 @@
 package com.github.partezan7.views.list;
 
-import com.github.partezan7.data.entity.Company;
-import com.github.partezan7.data.entity.Contact;
+import com.github.partezan7.data.entity.Department;
+import com.github.partezan7.data.entity.Employee;
 import com.github.partezan7.data.entity.Status;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ContactFormTest {
-    private List<Company> companies;
+public class EmployeeFormTest {
+    private List<Department> companies;
     private List<Status> statuses;
-    private Contact marcUsher;
-    private Company company1;
-    private Company company2;
+    private Employee marcUsher;
+    private Department department1;
+    private Department department2;
     private Status status1;
     private Status status2;
 
-    @BeforeEach  
+    @BeforeEach
     public void setupData() {
         companies = new ArrayList<>();
-        company1 = new Company();
-        company1.setName("Vaadin Ltd");
-        company2 = new Company();
-        company2.setName("IT Mill");
-        companies.add(company1);
-        companies.add(company2);
+        department1 = new Department();
+        department1.setName("Vaadin Ltd");
+        department2 = new Department();
+        department2.setName("IT Mill");
+        companies.add(department1);
+        companies.add(department2);
 
         statuses = new ArrayList<>();
         status1 = new Status();
@@ -38,47 +40,47 @@ public class ContactFormTest {
         statuses.add(status1);
         statuses.add(status2);
 
-        marcUsher = new Contact();
+        marcUsher = new Employee();
         marcUsher.setFirstName("Marc");
         marcUsher.setLastName("Usher");
         marcUsher.setEmail("marc@usher.com");
         marcUsher.setStatus(status1);
-        marcUsher.setCompany(company2);
+        marcUsher.setCompany(department2);
     }
 
     @Test
     public void formFieldsPopulated() {
-        ContactForm form = new ContactForm(companies, statuses);
+        EmployeeForm form = new EmployeeForm(companies, statuses);
         form.setContact(marcUsher);
         assertEquals("Marc", form.firstName.getValue());
         assertEquals("Usher", form.lastName.getValue());
         assertEquals("marc@usher.com", form.email.getValue());
-        assertEquals(company2, form.company.getValue());
+        assertEquals(department2, form.company.getValue());
         assertEquals(status1, form.status.getValue());
     }
 
     @Test
     public void saveEventHasCorrectValues() {
-        ContactForm form = new ContactForm(companies, statuses);
-        Contact contact = new Contact();
-        form.setContact(contact);
+        EmployeeForm form = new EmployeeForm(companies, statuses);
+        Employee employee = new Employee();
+        form.setContact(employee);
         form.firstName.setValue("John");
         form.lastName.setValue("Doe");
-        form.company.setValue(company1);
+        form.company.setValue(department1);
         form.email.setValue("john@doe.com");
         form.status.setValue(status2);
 
-        AtomicReference<Contact> savedContactRef = new AtomicReference<>(null);
+        AtomicReference<Employee> savedContactRef = new AtomicReference<>(null);
         form.addSaveListener(e -> {
             savedContactRef.set(e.getContact());
         });
         form.save.click();
-        Contact savedContact = savedContactRef.get();
+        Employee savedEmployee = savedContactRef.get();
 
-        assertEquals("John", savedContact.getFirstName());
-        assertEquals("Doe", savedContact.getLastName());
-        assertEquals("john@doe.com", savedContact.getEmail());
-        assertEquals(company1, savedContact.getCompany());
-        assertEquals(status2, savedContact.getStatus());
+        assertEquals("John", savedEmployee.getFirstName());
+        assertEquals("Doe", savedEmployee.getLastName());
+        assertEquals("john@doe.com", savedEmployee.getEmail());
+        assertEquals(department1, savedEmployee.getCompany());
+        assertEquals(status2, savedEmployee.getStatus());
     }
 }

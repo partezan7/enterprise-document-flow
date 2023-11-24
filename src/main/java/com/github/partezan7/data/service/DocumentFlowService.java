@@ -1,59 +1,59 @@
 package com.github.partezan7.data.service;
 
-import com.github.partezan7.data.entity.Company;
-import com.github.partezan7.data.entity.Contact;
+import com.github.partezan7.data.entity.Department;
+import com.github.partezan7.data.entity.Employee;
 import com.github.partezan7.data.entity.Status;
-import com.github.partezan7.data.repository.CompanyRepository;
-import com.github.partezan7.data.repository.ContactRepository;
+import com.github.partezan7.data.repository.DepartmentRepository;
+import com.github.partezan7.data.repository.EmployeeRepository;
 import com.github.partezan7.data.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service 
+@Service
 public class DocumentFlowService {
 
-    private final ContactRepository contactRepository;
-    private final CompanyRepository companyRepository;
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
     private final StatusRepository statusRepository;
 
-    public DocumentFlowService(ContactRepository contactRepository,
-                               CompanyRepository companyRepository,
+    public DocumentFlowService(EmployeeRepository employeeRepository,
+                               DepartmentRepository departmentRepository,
                                StatusRepository statusRepository) {
-        this.contactRepository = contactRepository;
-        this.companyRepository = companyRepository;
+        this.employeeRepository = employeeRepository;
+        this.departmentRepository = departmentRepository;
         this.statusRepository = statusRepository;
     }
 
-    public List<Contact> findAllContacts(String stringFilter) {
-        if (stringFilter == null || stringFilter.isEmpty()) { 
-            return contactRepository.findAll();
+    public List<Employee> findAllContacts(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return employeeRepository.findAll();
         } else {
-            return contactRepository.search(stringFilter);
+            return employeeRepository.search(stringFilter);
         }
     }
 
     public long countContacts() {
-        return contactRepository.count();
+        return employeeRepository.count();
     }
 
-    public void deleteContact(Contact contact) {
-        contactRepository.delete(contact);
+    public void deleteContact(Employee employee) {
+        employeeRepository.delete(employee);
     }
 
-    public void saveContact(Contact contact) {
-        if (contact == null) { 
-            System.err.println("Contact is null. Are you sure you have connected your form to the application?");
+    public void saveContact(Employee employee) {
+        if (employee == null) {
+            System.err.println("Employee is null. Are you sure you have connected your form to the application?");
             return;
         }
-        contactRepository.save(contact);
+        employeeRepository.save(employee);
     }
 
-    public List<Company> findAllCompanies() {
-        return companyRepository.findAll();
+    public List<Department> findAllCompanies() {
+        return departmentRepository.findAll();
     }
 
-    public List<Status> findAllStatuses(){
+    public List<Status> findAllStatuses() {
         return statusRepository.findAll();
     }
 }
