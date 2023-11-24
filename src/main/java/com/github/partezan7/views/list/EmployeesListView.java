@@ -85,8 +85,10 @@ public class EmployeesListView extends VerticalLayout {
         grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Подразделение");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editContact(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> {
+            if (securityService.isUserHaveRights(Role.ADMIN)) editContact(event.getValue());
+        });
+
     }
 
     private Component getToolbar() {

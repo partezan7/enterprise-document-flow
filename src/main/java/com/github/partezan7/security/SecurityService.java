@@ -5,6 +5,7 @@ import com.github.partezan7.data.entity.user.Role;
 import com.github.partezan7.data.service.UserService;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -29,10 +30,18 @@ public class SecurityService {
     }
 
     public boolean isUserHaveRights(Role role) {
-        User user = (User) userService
-                .loadUserByUsername(getAuthenticatedUser()
-                        .getUsername());
-        Set<Role> roles = user.getRoles();
-        return roles.contains(role);
+        UserDetails userDetails = getAuthenticatedUser();
+
+        try {
+            User user = (User) userService
+                    .loadUserByUsername(userDetails
+                            .getUsername());
+            Set<Role> roles = user.getRoles();
+            return roles.contains(role);
+        } catch (UsernameNotFoundException exception) {
+            logout();
+            // TODO: 24.11.2023 need to notify the user that the given username is not found in the database  
+            return false;
+        }
     }
 }
