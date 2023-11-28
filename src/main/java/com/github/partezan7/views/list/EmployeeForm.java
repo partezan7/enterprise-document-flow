@@ -73,7 +73,7 @@ public class EmployeeForm extends FormLayout {
     }
 
 
-    public void setContact(Employee employee) {
+    public void setEmployee(Employee employee) {
         binder.setBean(employee); // <1>
     }
 
@@ -86,7 +86,7 @@ public class EmployeeForm extends FormLayout {
             this.employee = employee;
         }
 
-        public Employee getContact() {
+        public Employee getEmployee() {
             return employee;
         }
     }

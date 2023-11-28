@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class EmployeesListViewTest {
+public class EmployeeListViewTest {
 
     static {
         // Prevent Vaadin Development mode to launch browser window
@@ -20,14 +20,14 @@ public class EmployeesListViewTest {
     }
 
     @Autowired
-    private EmployeesListView employeesListView;
+    private EmployeeListView employeeListView;
 
     @Test
     public void formShownWhenContactSelected() {
-        Grid<Employee> grid = employeesListView.grid;
+        Grid<Employee> grid = employeeListView.grid;
         Employee firstEmployee = getFirstItem(grid);
 
-        EmployeeForm form = employeesListView.form;
+        EmployeeForm form = employeeListView.form;
 
         assertFalse(form.isVisible());
         grid.asSingleSelect().setValue(firstEmployee);

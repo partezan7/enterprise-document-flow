@@ -25,18 +25,18 @@ import org.springframework.context.annotation.Scope;
 @Scope("prototype")
 @PermitAll
 @Route(value = "", layout = MainLayout.class)
-@PageTitle("Документооборот")
-public class EmployeesListView extends VerticalLayout {
+@PageTitle("Сотрудники")
+public class EmployeeListView extends VerticalLayout {
     final Grid<Employee> grid = new Grid<>(Employee.class);
     private final TextField filterText = new TextField();
     final EmployeeForm form;
     private final DocumentFlowService service;
     private final SecurityService securityService;
 
-    public EmployeesListView(DocumentFlowService service, SecurityService securityService) {
+    public EmployeeListView(DocumentFlowService service, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
-        this.form = new EmployeeForm(service.findAllCompanies(), service.findAllStatuses());
+        this.form = new EmployeeForm(service.findAllDepartments(), service.findAllStatuses());
         addClassName("list-view");
         setSizeFull();
         configureGrid();
@@ -51,26 +51,26 @@ public class EmployeesListView extends VerticalLayout {
         HorizontalLayout content = new HorizontalLayout(grid, form);
         content.setFlexGrow(2, grid);
         content.setFlexGrow(1, form);
-        content.addClassNames("content");
+        content.addClassNames("employee-content");
         content.setSizeFull();
         return content;
     }
 
     private void configureForm() {
         form.setWidth("25em");
-        form.addSaveListener(this::saveContact); // <1>
-        form.addDeleteListener(this::deleteContact); // <2>
+        form.addSaveListener(this::saveEmployee); // <1>
+        form.addDeleteListener(this::deleteEmployee); // <2>
         form.addCloseListener(e -> closeEditor()); // <3>
     }
 
-    private void saveContact(EmployeeForm.SaveEvent event) {
-        service.saveContact(event.getContact());
+    private void saveEmployee(EmployeeForm.SaveEvent event) {
+        service.saveEmployee(event.getEmployee());
         updateList();
         closeEditor();
     }
 
-    private void deleteContact(EmployeeForm.DeleteEvent event) {
-        service.deleteContact(event.getContact());
+    private void deleteEmployee(EmployeeForm.DeleteEvent event) {
+        service.deleteEmployee(event.getEmployee());
         updateList();
         closeEditor();
     }
@@ -86,7 +86,7 @@ public class EmployeesListView extends VerticalLayout {
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(event -> {
-            if (securityService.isUserHaveRights(Role.ADMIN)) editContact(event.getValue());
+            if (securityService.isUserHaveRights(Role.ADMIN)) editEmployee(event.getValue());
         });
 
     }
@@ -97,38 +97,38 @@ public class EmployeesListView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button addContactButton = new Button("Добавить");
-        addContactButton.addClickListener(click -> addContact());
+        Button addEmployeeButton = new Button("Добавить");
+        addEmployeeButton.addClickListener(click -> addEmployee());
 
         var toolbar = new HorizontalLayout(filterText);
-        if (securityService.isUserHaveRights(Role.ADMIN)) toolbar.add(addContactButton);
+        if (securityService.isUserHaveRights(Role.ADMIN)) toolbar.add(addEmployeeButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
-    public void editContact(Employee employee) {
+    public void editEmployee(Employee employee) {
         if (employee == null) {
             closeEditor();
         } else {
-            form.setContact(employee);
+            form.setEmployee(employee);
             form.setVisible(true);
             addClassName("editing");
         }
     }
 
     private void closeEditor() {
-        form.setContact(null);
+        form.setEmployee(null);
         form.setVisible(false);
         removeClassName("editing");
     }
 
-    private void addContact() {
+    private void addEmployee() {
         grid.asSingleSelect().clear();
-        editContact(new Employee());
+        editEmployee(new Employee());
     }
 
 
     private void updateList() {
-        grid.setItems(service.findAllContacts(filterText.getValue()));
+        grid.setItems(service.findAllEmployees(filterText.getValue()));
     }
 }

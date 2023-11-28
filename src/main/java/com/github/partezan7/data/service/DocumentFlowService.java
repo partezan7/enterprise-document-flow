@@ -25,7 +25,7 @@ public class DocumentFlowService {
         this.statusRepository = statusRepository;
     }
 
-    public List<Employee> findAllContacts(String stringFilter) {
+    public List<Employee> findAllEmployees(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
             return employeeRepository.findAll();
         } else {
@@ -37,11 +37,11 @@ public class DocumentFlowService {
         return employeeRepository.count();
     }
 
-    public void deleteContact(Employee employee) {
+    public void deleteEmployee(Employee employee) {
         employeeRepository.delete(employee);
     }
 
-    public void saveContact(Employee employee) {
+    public void saveEmployee(Employee employee) {
         if (employee == null) {
             System.err.println("Employee is null. Are you sure you have connected your form to the application?");
             return;
@@ -49,7 +49,27 @@ public class DocumentFlowService {
         employeeRepository.save(employee);
     }
 
-    public List<Department> findAllCompanies() {
+    public void saveDepartment(Department department) {
+        if (department == null) {
+            System.out.println("department is null");
+            return;
+        }
+        departmentRepository.save(department);
+    }
+
+    public void updateDepartment(Department department) {
+        if (department == null) {
+            System.out.println("department is null");
+            return;
+        }
+        departmentRepository.updateDepartmentById(department.getName(), department.getId());
+    }
+
+    public void deleteDepartment(Department department) {
+        departmentRepository.delete(department);
+    }
+
+    public List<Department> findAllDepartments() {
         return departmentRepository.findAll();
     }
 

@@ -1,7 +1,8 @@
 package com.github.partezan7.views;
 
 import com.github.partezan7.security.SecurityService;
-import com.github.partezan7.views.list.EmployeesListView;
+import com.github.partezan7.views.list.DepartmentListView;
+import com.github.partezan7.views.list.EmployeeListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -45,7 +46,8 @@ public class MainLayout extends AppLayout {
 
     private void createDrawer() {
         addToDrawer(new VerticalLayout(
-                new RouterLink("Список сотрудников", EmployeesListView.class)
+                new RouterLink("Сотрудники", EmployeeListView.class),
+                new RouterLink("Подразделения", DepartmentListView.class)
         ));
     }
 }

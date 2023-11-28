@@ -51,7 +51,7 @@ public class EmployeeFormTest {
     @Test
     public void formFieldsPopulated() {
         EmployeeForm form = new EmployeeForm(companies, statuses);
-        form.setContact(marcUsher);
+        form.setEmployee(marcUsher);
         assertEquals("Marc", form.firstName.getValue());
         assertEquals("Usher", form.lastName.getValue());
         assertEquals("marc@usher.com", form.email.getValue());
@@ -63,7 +63,7 @@ public class EmployeeFormTest {
     public void saveEventHasCorrectValues() {
         EmployeeForm form = new EmployeeForm(companies, statuses);
         Employee employee = new Employee();
-        form.setContact(employee);
+        form.setEmployee(employee);
         form.firstName.setValue("John");
         form.lastName.setValue("Doe");
         form.company.setValue(department1);
@@ -72,7 +72,7 @@ public class EmployeeFormTest {
 
         AtomicReference<Employee> savedContactRef = new AtomicReference<>(null);
         form.addSaveListener(e -> {
-            savedContactRef.set(e.getContact());
+            savedContactRef.set(e.getEmployee());
         });
         form.save.click();
         Employee savedEmployee = savedContactRef.get();
