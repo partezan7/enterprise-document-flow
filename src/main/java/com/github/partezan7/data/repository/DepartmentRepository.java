@@ -1,12 +1,10 @@
 package com.github.partezan7.data.repository;
 
 import com.github.partezan7.data.entity.Department;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
 
-public interface DepartmentRepository extends JpaRepository<Department, Long> {
-    @Modifying
-    @Query("update Department d set d.name = ?1 where d.id = ?2")
-    void updateDepartmentById(String name, Long id);
+public interface DepartmentRepository extends CrudRepository<Department, Long> {
+    Page<Department> findAll(Pageable pageable);
 }

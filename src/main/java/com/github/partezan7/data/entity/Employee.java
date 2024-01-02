@@ -7,6 +7,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 
 @Entity
 public class Employee extends AbstractEntity {
@@ -21,6 +22,7 @@ public class Employee extends AbstractEntity {
     @JoinColumn(name = "department_id")
     @NotNull
     @JsonIgnoreProperties({"employees"})
+    @Lazy
     private Department department;
 
     @NotNull

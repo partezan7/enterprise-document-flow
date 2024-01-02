@@ -11,6 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class DocumentFlowService {
@@ -64,7 +68,7 @@ public class DocumentFlowService {
             System.out.println("department is null");
             return;
         }
-        departmentRepository.updateDepartmentById(department.getName(), department.getId());
+        departmentRepository.save(department);
     }
 
     public void deleteDepartment(Department department) {
@@ -72,7 +76,9 @@ public class DocumentFlowService {
     }
 
     public List<Department> findAllDepartments() {
-        return departmentRepository.findAll();
+        Iterable<Department> departments = departmentRepository.findAll();
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(departments.iterator(), Spliterator.ORDERED), false)
+                .collect(Collectors.toList());
     }
 
     public List<Status> findAllStatuses() {
