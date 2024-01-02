@@ -6,6 +6,8 @@ import com.github.partezan7.data.entity.Status;
 import com.github.partezan7.data.repository.DepartmentRepository;
 import com.github.partezan7.data.repository.EmployeeRepository;
 import com.github.partezan7.data.repository.StatusRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,5 +77,9 @@ public class DocumentFlowService {
 
     public List<Status> findAllStatuses() {
         return statusRepository.findAll();
+    }
+
+    public Page<Department> list(Pageable pageable) {
+        return departmentRepository.findAll(pageable);
     }
 }

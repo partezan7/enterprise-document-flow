@@ -1,25 +1,33 @@
 package com.github.partezan7.views.list;
 
 import com.github.partezan7.data.entity.Department;
-import com.github.partezan7.data.entity.Employee;
 import com.github.partezan7.data.service.DocumentFlowService;
 import com.github.partezan7.security.SecurityService;
 import com.github.partezan7.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Shortcuts;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Вкладка "Список сотрудников"
@@ -30,16 +38,23 @@ import org.springframework.context.annotation.Scope;
 @Route(value = "department", layout = MainLayout.class)
 @PageTitle("Подразделения")
 public class DepartmentListView extends VerticalLayout {
-    final Grid<Department> grid = new Grid<>(Department.class);
-    final Editor<Department> editor = grid.getEditor();
-    final Binder<Department> binder = new Binder<>(Department.class);
-    private final TextField textField = new TextField();
+    final Grid<Department> grid;
+    final Binder<Department> binder;
+    final Editor<Department> editor;
+    private final TextField addDepartmentField;
     private final DocumentFlowService service;
     private final SecurityService securityService;
+    private Optional<Grid.Column<Department>> currentColumn = Optional.empty();
+    private Optional<Department> currentItem = Optional.empty();
 
     public DepartmentListView(DocumentFlowService service, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
+        this.grid = new Grid<>(Department.class);
+        this.binder = new BeanValidationBinder<>(Department.class);
+        this.editor = grid.getEditor();
+        this.addDepartmentField = new TextField();
+
         addClassName("department-list-view");
         setSizeFull();
         configureGrid();
@@ -73,37 +88,70 @@ public class DepartmentListView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassNames("department-grid");
         grid.setSizeFull();
-        grid.setColumns("name");
-        grid.getColumns().get(0).setHeader("Название подразделения");
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
-        grid.addItemDoubleClickListener(e -> {
-            editor.editItem(e.getItem());
-            Component editorComponent = e.getColumn().getEditorComponent();
-            if (editorComponent instanceof Focusable) {
-                ((Focusable) editorComponent).focus();
-            }
-        });
-
 
         editor.setBinder(binder);
         editor.setBuffered(true);
 
-        TextField name = new TextField();
-        name.setWidthFull();
+        // Save Listener to save the changed Department
+        editor.addSaveListener(event -> {
+            Department department = event.getItem();
+            service.updateDepartment(department);
+        });
 
-        // FIXME: 24.11.2023 not working, needing to implement
-        binder.forField(name)
-                .asRequired("Department name must not be empty")
-                .bind(Department::getName, (department, string) -> {
-                    department.setName(string);
-                    service.updateDepartment(department);
+        TextField textName = new TextField();
+        textName.setWidthFull();
+        binder.forField(textName)
+                .bind("name");
+        grid.setColumns("name");
+        List<Grid.Column<Department>> columns = grid.getColumns();
+        columns.get(0)
+                .setHeader("Название подразделения")
+                .setEditorComponent(textName);
+        columns.forEach(col -> col.setAutoWidth(true));
+
+        grid.setItems(query -> service.list(
+                        PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
+                .stream());
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+
+
+        // If a row is selected open the Department in the editor
+        grid.addSelectionListener(event -> event.getFirstSelectedItem().ifPresent(department -> {
+            editor.save();
+
+            if (!editor.isOpen()) {
+                grid.getEditor().editItem(department);
+
+                currentColumn.ifPresent(column -> {
+                    if (column.getEditorComponent() instanceof Focusable<?> focusable) {
+                        focusable.focus();
+                    }
                 });
-        grid.getColumns().get(0).setEditorComponent(name);
+            }
+        }));
+
+        grid.addCellFocusListener(event -> {
+            // Store the item on cell focus. Used in the ENTER ShortcutListener
+            currentItem = event.getItem();
+            // Store the current column. Used in the SelectionListener to focus the editor component
+            currentColumn = event.getColumn();
+        });
+
+        // Select row on enter
+        Shortcuts.addShortcutListener(grid, event -> currentItem.ifPresent(grid::select), Key.ENTER).listenOn(grid);
+
+        // Cancel the editor on Escape
+        Shortcuts.addShortcutListener(grid, () -> {
+            if (editor.isOpen()) {
+                editor.cancel();
+            }
+        }, Key.ESCAPE).listenOn(grid);
+
     }
 
     private Component getToolbar() {
-        textField.setPlaceholder("Подразделение");
-        textField.setValueChangeMode(ValueChangeMode.LAZY);
+        addDepartmentField.setPlaceholder("Подразделение");
+        addDepartmentField.setValueChangeMode(ValueChangeMode.LAZY);
 
         Button addDepartmentButton = new Button("Добавить");
         addDepartmentButton.addClickListener(click -> addDepartment());
@@ -111,35 +159,21 @@ public class DepartmentListView extends VerticalLayout {
         Button deleteDepartmentButton = new Button("Удалить");
         deleteDepartmentButton.addClickListener(click -> deleteDepartment());
 
-        var toolbar = new HorizontalLayout(textField, addDepartmentButton, deleteDepartmentButton);
+        var toolbar = new HorizontalLayout(addDepartmentField, addDepartmentButton, deleteDepartmentButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
-//    public void editDepartment(Department department) {
-//        if (department == null) {
-////            closeEditor();
-//        } else {
-//            form.setContact(employee);
-//            form.setVisible(true);
-//            addClassName("editing");
-//        }
-//    }
-
-//    private void closeEditor() {
-//        form.setContact(null);
-//        form.setVisible(false);
-//        removeClassName("editing");
-//    }
 
     private void addDepartment() {
         grid.asSingleSelect().clear();
-        saveDepartment(textField.getValue());
-        textField.clear();
+        saveDepartment(addDepartmentField.getValue());
+        addDepartmentField.clear();
     }
 
 
     private void updateList() {
         grid.setItems(service.findAllDepartments());
     }
+
 }
