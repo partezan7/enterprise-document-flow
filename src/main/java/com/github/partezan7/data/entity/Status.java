@@ -1,8 +1,10 @@
 package com.github.partezan7.data.entity;
 
 import jakarta.persistence.Entity;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
+@DynamicUpdate
 public class Status extends AbstractEntity {
     private String name;
 

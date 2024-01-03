@@ -64,11 +64,7 @@ public class DocumentFlowService {
     }
 
     public void updateDepartment(Department department) {
-        if (department == null) {
-            System.out.println("department is null");
-            return;
-        }
-        departmentRepository.save(department);
+        saveDepartment(department);
     }
 
     public void deleteDepartment(Department department) {
@@ -82,10 +78,32 @@ public class DocumentFlowService {
     }
 
     public List<Status> findAllStatuses() {
-        return statusRepository.findAll();
+        Iterable<Status> statuses = statusRepository.findAll();
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(statuses.iterator(), Spliterator.ORDERED), false)
+                .collect(Collectors.toList());
     }
 
-    public Page<Department> list(Pageable pageable) {
+    public Page<Department> departmentList(Pageable pageable) {
         return departmentRepository.findAll(pageable);
+    }
+
+    public Page<Status> statusList(Pageable pageable) {
+        return statusRepository.findAll(pageable);
+    }
+
+    public void updateStatus(Status status) {
+        saveStatus(status);
+    }
+
+    public void saveStatus(Status status) {
+        if (status == null) {
+            System.out.println("status is null");
+            return;
+        }
+        statusRepository.save(status);
+    }
+
+    public void deleteStatus(Status status) {
+        statusRepository.delete(status);
     }
 }

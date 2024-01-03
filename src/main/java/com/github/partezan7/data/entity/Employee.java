@@ -27,6 +27,7 @@ public class Employee extends AbstractEntity {
 
     @NotNull
     @ManyToOne
+    @Lazy
     private Status status;
 
     @Email

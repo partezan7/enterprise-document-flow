@@ -3,6 +3,7 @@ package com.github.partezan7.views;
 import com.github.partezan7.security.SecurityService;
 import com.github.partezan7.views.list.DepartmentListView;
 import com.github.partezan7.views.list.EmployeeListView;
+import com.github.partezan7.views.list.StatusListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -29,12 +30,12 @@ public class MainLayout extends AppLayout {
                 LumoUtility.Margin.MEDIUM);
 
         String u = securityService.getAuthenticatedUser().getUsername();
-        Button logout = new Button("Выйти из: " + u, e -> securityService.logout()); // <2>
+        Button logout = new Button("Выйти из: " + u, e -> securityService.logout());
 
         var header = new HorizontalLayout(new DrawerToggle(), logo, logout);
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        header.expand(logo); // <4>
+        header.expand(logo);
         header.setWidthFull();
         header.addClassNames(
                 LumoUtility.Padding.Vertical.NONE,
@@ -47,7 +48,8 @@ public class MainLayout extends AppLayout {
     private void createDrawer() {
         addToDrawer(new VerticalLayout(
                 new RouterLink("Сотрудники", EmployeeListView.class),
-                new RouterLink("Подразделения", DepartmentListView.class)
+                new RouterLink("Подразделения", DepartmentListView.class),
+                new RouterLink("Статусы", StatusListView.class)
         ));
     }
 }
