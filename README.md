@@ -1,17 +1,28 @@
-# Spring Boot and Vaadin course source code
+# Enterprise document flow (Spring Boot and Vaadin application)
 
-This repository contains the source code for the [Building Modern Web Applications With Spring Boot and Vaadin](https://vaadin.com/docs/latest/flow/tutorials/in-depth-course).
+This repository contains the source code for the [Enterprise document flow](https://github.com/partezan7/enterprise-document-flow).
 
-*Live demo:* https://crm.demo.vaadin.com
+*Live demo:* https://coming_later
+
+## Description 
+This application is a working prototype for document automation in an enterprise. It is planned to create a multi-user 
+application with an adaptive interface, depending on the user's role.
 
 ## Running the Application
 There are two ways to run the application:  using `mvn` or by running the `Application` class directly from your IDE.
 
-## Branches
+_______________________________________________________________________________________________________________________
 
-- The main branch contains the source code for the latest Vaadin release
-- The `v14` branch contains the source code for Vaadin 14
+# Документооборот предприятия (приложение Spring Boot и Vaadin)
 
+Этот репозиторий содержит исходный код приложения [Документооборот предприятия](https://github.com/partezan7/enterprise-document-flow).
 
-## Text tutorial
-You can find a text version of the tutorial in the [Vaadin Documentation](https://vaadin.com/docs/latest/flow/tutorials/in-depth-course).
+*Живая демонстрация:* https://будет_позже
+
+## Описание
+Данное приложение представляет собой рабочий прототип автоматизации документооборота на предприятии. Планируется создание многопользовательского
+приложение с адаптивным интерфейсом в зависимости от роли пользователя.
+
+## Запуск приложения
+Есть два способа запустить приложение: использовать mvn или запустить класс Application непосредственно из вашей IDE.
+
