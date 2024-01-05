@@ -1,7 +1,7 @@
 package com.github.partezan7.views.list;
 
 import com.github.partezan7.data.entity.Status;
-import com.github.partezan7.data.service.DocumentFlowService;
+import com.github.partezan7.data.service.StatusService;
 import com.github.partezan7.security.SecurityService;
 import com.github.partezan7.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -42,12 +42,12 @@ public class StatusListView extends VerticalLayout {
     final Binder<Status> binder;
     final Editor<Status> editor;
     private final TextField addStatusField;
-    private final DocumentFlowService service;
+    private final StatusService service;
     private final SecurityService securityService;
     private Optional<Grid.Column<Status>> currentColumn = Optional.empty();
     private Optional<Status> currentItem = Optional.empty();
 
-    public StatusListView(DocumentFlowService service, SecurityService securityService) {
+    public StatusListView(StatusService service, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
         this.grid = new Grid<>(Status.class);

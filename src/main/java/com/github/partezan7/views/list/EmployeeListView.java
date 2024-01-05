@@ -2,7 +2,9 @@ package com.github.partezan7.views.list;
 
 import com.github.partezan7.data.entity.Employee;
 import com.github.partezan7.data.entity.user.Role;
-import com.github.partezan7.data.service.DocumentFlowService;
+import com.github.partezan7.data.service.DepartmentService;
+import com.github.partezan7.data.service.EmployeeService;
+import com.github.partezan7.data.service.StatusService;
 import com.github.partezan7.security.SecurityService;
 import com.github.partezan7.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -30,13 +32,13 @@ public class EmployeeListView extends VerticalLayout {
     final Grid<Employee> grid = new Grid<>(Employee.class);
     private final TextField filterText = new TextField();
     final EmployeeForm form;
-    private final DocumentFlowService service;
+    private final EmployeeService service;
     private final SecurityService securityService;
 
-    public EmployeeListView(DocumentFlowService service, SecurityService securityService) {
+    public EmployeeListView(EmployeeService service, DepartmentService departmentService, StatusService statusService, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
-        this.form = new EmployeeForm(service.findAllDepartments(), service.findAllStatuses());
+        this.form = new EmployeeForm(departmentService.findAllDepartments(), statusService.findAllStatuses());
         addClassName("list-view");
         setSizeFull();
         configureGrid();

@@ -1,7 +1,7 @@
 package com.github.partezan7.views.list;
 
 import com.github.partezan7.data.entity.Department;
-import com.github.partezan7.data.service.DocumentFlowService;
+import com.github.partezan7.data.service.DepartmentService;
 import com.github.partezan7.security.SecurityService;
 import com.github.partezan7.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -42,12 +42,12 @@ public class DepartmentListView extends VerticalLayout {
     final Binder<Department> binder;
     final Editor<Department> editor;
     private final TextField addDepartmentField;
-    private final DocumentFlowService service;
+    private final DepartmentService service;
     private final SecurityService securityService;
     private Optional<Grid.Column<Department>> currentColumn = Optional.empty();
     private Optional<Department> currentItem = Optional.empty();
 
-    public DepartmentListView(DocumentFlowService service, SecurityService securityService) {
+    public DepartmentListView(DepartmentService service, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
         this.grid = new Grid<>(Department.class);
