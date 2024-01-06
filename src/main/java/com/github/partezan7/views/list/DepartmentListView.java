@@ -73,14 +73,14 @@ public class DepartmentListView extends VerticalLayout {
         if (departmentName.isEmpty()) return;
         Department department = new Department();
         department.setName(departmentName);
-        service.saveDepartment(department);
+        service.save(department);
         updateList();
     }
 
     private void deleteDepartment() {
         Department department = grid.asSingleSelect().getValue();
         if (department != null) {
-            service.deleteDepartment(department);
+            service.delete(department);
             updateList();
         }
     }
@@ -95,7 +95,7 @@ public class DepartmentListView extends VerticalLayout {
         // Save Listener to save the changed Department
         editor.addSaveListener(event -> {
             Department department = event.getItem();
-            service.updateDepartment(department);
+            service.update(department);
         });
 
         TextField textName = new TextField();
@@ -109,7 +109,7 @@ public class DepartmentListView extends VerticalLayout {
                 .setEditorComponent(textName);
         columns.forEach(col -> col.setAutoWidth(true));
 
-        grid.setItems(query -> service.departmentList(
+        grid.setItems(query -> service.departmentPage(
                         PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -173,7 +173,7 @@ public class DepartmentListView extends VerticalLayout {
 
 
     private void updateList() {
-        grid.setItems(service.findAllDepartments());
+        grid.setItems(service.findAll());
     }
 
 }

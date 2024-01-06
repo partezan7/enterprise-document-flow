@@ -73,14 +73,14 @@ public class StatusListView extends VerticalLayout {
         if (StatusName.isEmpty()) return;
         Status Status = new Status();
         Status.setName(StatusName);
-        service.saveStatus(Status);
+        service.save(Status);
         updateList();
     }
 
     private void deleteStatus() {
         Status status = grid.asSingleSelect().getValue();
         if (status != null) {
-            service.deleteStatus(status);
+            service.delete(status);
             updateList();
         }
     }
@@ -95,7 +95,7 @@ public class StatusListView extends VerticalLayout {
         // Save Listener to save the changed Status
         editor.addSaveListener(event -> {
             Status Status = event.getItem();
-            service.updateStatus(Status);
+            service.update(Status);
         });
 
         TextField textName = new TextField();
@@ -109,7 +109,7 @@ public class StatusListView extends VerticalLayout {
                 .setEditorComponent(textName);
         columns.forEach(col -> col.setAutoWidth(true));
 
-        grid.setItems(query -> service.statusList(
+        grid.setItems(query -> service.statusPage(
                         PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -173,7 +173,7 @@ public class StatusListView extends VerticalLayout {
 
 
     private void updateList() {
-        grid.setItems(service.findAllStatuses());
+        grid.setItems(service.findAll());
     }
 
 }

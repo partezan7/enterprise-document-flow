@@ -7,30 +7,38 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EmployeeService {
+public class EmployeeService implements EntityService<Employee> {
     private final EmployeeRepository employeeRepository;
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
-    public List<Employee> findAllEmployees(String stringFilter) {
+    public List<Employee> findAll(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
-            return employeeRepository.findAll();
+            return findAll();
         } else {
             return employeeRepository.search(stringFilter);
         }
     }
 
-    public long countContacts() {
-        return employeeRepository.count();
-    }
-
-    public void deleteEmployee(Employee employee) {
+    @Override
+    public void delete(Employee employee) {
         employeeRepository.delete(employee);
     }
 
-    public void saveEmployee(Employee employee) {
+    @Override
+    public void update(Employee entity) {
+        employeeRepository.save(entity);
+    }
+
+    @Override
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
+
+    @Override
+    public void save(Employee employee) {
         if (employee == null) {
             System.err.println("Employee is null. Are you sure you have connected your form to the application?");
             return;

@@ -13,14 +13,15 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class DepartmentService {
+public class DepartmentService implements EntityService<Department> {
     private final DepartmentRepository departmentRepository;
 
     public DepartmentService(DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
     }
 
-    public void saveDepartment(Department department) {
+    @Override
+    public void save(Department department) {
         if (department == null) {
             System.out.println("department is null");
             return;
@@ -28,21 +29,24 @@ public class DepartmentService {
         departmentRepository.save(department);
     }
 
-    public void updateDepartment(Department department) {
-        saveDepartment(department);
+    @Override
+    public void update(Department department) {
+        save(department);
     }
 
-    public void deleteDepartment(Department department) {
+    @Override
+    public void delete(Department department) {
         departmentRepository.delete(department);
     }
 
-    public List<Department> findAllDepartments() {
+    @Override
+    public List<Department> findAll() {
         Iterable<Department> departments = departmentRepository.findAll();
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(departments.iterator(), Spliterator.ORDERED), false)
                 .collect(Collectors.toList());
     }
 
-    public Page<Department> departmentList(Pageable pageable) {
+    public Page<Department> departmentPage(Pageable pageable) {
         return departmentRepository.findAll(pageable);
     }
 

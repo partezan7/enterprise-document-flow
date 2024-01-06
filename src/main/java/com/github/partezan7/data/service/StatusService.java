@@ -13,29 +13,32 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class StatusService {
+public class StatusService implements EntityService<Status> {
     private final StatusRepository statusRepository;
 
     public StatusService(StatusRepository statusRepository) {
         this.statusRepository = statusRepository;
     }
 
-    public List<Status> findAllStatuses() {
+    @Override
+    public List<Status> findAll() {
         Iterable<Status> statuses = statusRepository.findAll();
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(statuses.iterator(), Spliterator.ORDERED), false)
                 .collect(Collectors.toList());
     }
 
 
-    public Page<Status> statusList(Pageable pageable) {
+    public Page<Status> statusPage(Pageable pageable) {
         return statusRepository.findAll(pageable);
     }
 
-    public void updateStatus(Status status) {
-        saveStatus(status);
+    @Override
+    public void update(Status status) {
+        save(status);
     }
 
-    public void saveStatus(Status status) {
+    @Override
+    public void save(Status status) {
         if (status == null) {
             System.out.println("status is null");
             return;
@@ -43,7 +46,8 @@ public class StatusService {
         statusRepository.save(status);
     }
 
-    public void deleteStatus(Status status) {
+    @Override
+    public void delete(Status status) {
         statusRepository.delete(status);
     }
 }

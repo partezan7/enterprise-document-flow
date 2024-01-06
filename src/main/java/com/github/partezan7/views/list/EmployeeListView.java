@@ -38,7 +38,7 @@ public class EmployeeListView extends VerticalLayout {
     public EmployeeListView(EmployeeService service, DepartmentService departmentService, StatusService statusService, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
-        this.form = new EmployeeForm(departmentService.findAllDepartments(), statusService.findAllStatuses());
+        this.form = new EmployeeForm(departmentService.findAll(), statusService.findAll());
         addClassName("list-view");
         setSizeFull();
         configureGrid();
@@ -66,13 +66,13 @@ public class EmployeeListView extends VerticalLayout {
     }
 
     private void saveEmployee(EmployeeForm.SaveEvent event) {
-        service.saveEmployee(event.getEmployee());
+        service.save(event.getEmployee());
         updateList();
         closeEditor();
     }
 
     private void deleteEmployee(EmployeeForm.DeleteEvent event) {
-        service.deleteEmployee(event.getEmployee());
+        service.delete(event.getEmployee());
         updateList();
         closeEditor();
     }
@@ -131,6 +131,6 @@ public class EmployeeListView extends VerticalLayout {
 
 
     private void updateList() {
-        grid.setItems(service.findAllEmployees(filterText.getValue()));
+        grid.setItems(service.findAll(filterText.getValue()));
     }
 }
