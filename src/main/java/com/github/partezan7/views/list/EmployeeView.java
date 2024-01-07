@@ -28,14 +28,14 @@ import org.springframework.context.annotation.Scope;
 @PermitAll
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Сотрудники")
-public class EmployeeListView extends VerticalLayout {
+public class EmployeeView extends VerticalLayout {
     final Grid<Employee> grid = new Grid<>(Employee.class);
     private final TextField filterText = new TextField();
     final EmployeeForm form;
     private final EmployeeService service;
     private final SecurityService securityService;
 
-    public EmployeeListView(EmployeeService service, DepartmentService departmentService, StatusService statusService, SecurityService securityService) {
+    public EmployeeView(EmployeeService service, DepartmentService departmentService, StatusService statusService, SecurityService securityService) {
         this.service = service;
         this.securityService = securityService;
         this.form = new EmployeeForm(departmentService.findAll(), statusService.findAll());

@@ -1,8 +1,7 @@
 package com.github.partezan7.views.list;
 
-import com.github.partezan7.data.entity.Status;
-import com.github.partezan7.data.service.StatusService;
-import com.github.partezan7.security.SecurityService;
+import com.github.partezan7.data.entity.Department;
+import com.github.partezan7.data.service.DepartmentService;
 import com.github.partezan7.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
@@ -30,32 +29,30 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Вкладка "Статусы"
+ * Вкладка "Подразделения"
  */
 @SpringComponent
 @Scope("prototype")
 @PermitAll
-@Route(value = "status", layout = MainLayout.class)
-@PageTitle("Статусы")
-public class StatusListView extends VerticalLayout {
-    final Grid<Status> grid;
-    final Binder<Status> binder;
-    final Editor<Status> editor;
-    private final TextField addStatusField;
-    private final StatusService service;
-    private final SecurityService securityService;
-    private Optional<Grid.Column<Status>> currentColumn = Optional.empty();
-    private Optional<Status> currentItem = Optional.empty();
+@Route(value = "department", layout = MainLayout.class)
+@PageTitle("Подразделения")
+public class DepartmentView extends VerticalLayout {
+    final Grid<Department> grid;
+    final Binder<Department> binder;
+    final Editor<Department> editor;
+    private final TextField addDepartmentField;
+    private final DepartmentService service;
+    private Optional<Grid.Column<Department>> currentColumn = Optional.empty();
+    private Optional<Department> currentItem = Optional.empty();
 
-    public StatusListView(StatusService service, SecurityService securityService) {
+    public DepartmentView(DepartmentService service) {
         this.service = service;
-        this.securityService = securityService;
-        this.grid = new Grid<>(Status.class);
-        this.binder = new BeanValidationBinder<>(Status.class);
+        this.grid = new Grid<>(Department.class);
+        this.binder = new BeanValidationBinder<>(Department.class);
         this.editor = grid.getEditor();
-        this.addStatusField = new TextField();
+        this.addDepartmentField = new TextField();
 
-        addClassName("Status-list-view");
+        addClassName("department-list-view");
         setSizeFull();
         configureGrid();
         add(getToolbar(), getContent());
@@ -64,38 +61,38 @@ public class StatusListView extends VerticalLayout {
 
     private HorizontalLayout getContent() {
         HorizontalLayout content = new HorizontalLayout(grid);
-        content.addClassNames("Status-content");
+        content.addClassNames("department-content");
         content.setSizeFull();
         return content;
     }
 
-    private void saveStatus(String StatusName) {
-        if (StatusName.isEmpty()) return;
-        Status Status = new Status();
-        Status.setName(StatusName);
-        service.save(Status);
+    private void saveDepartment(String departmentName) {
+        if (departmentName.isEmpty()) return;
+        Department department = new Department();
+        department.setName(departmentName);
+        service.save(department);
         updateList();
     }
 
-    private void deleteStatus() {
-        Status status = grid.asSingleSelect().getValue();
-        if (status != null) {
-            service.delete(status);
+    private void deleteDepartment() {
+        Department department = grid.asSingleSelect().getValue();
+        if (department != null) {
+            service.delete(department);
             updateList();
         }
     }
 
     private void configureGrid() {
-        grid.addClassNames("Status-grid");
+        grid.addClassNames("department-grid");
         grid.setSizeFull();
 
         editor.setBinder(binder);
         editor.setBuffered(true);
 
-        // Save Listener to save the changed Status
+        // Save Listener to save the changed Department
         editor.addSaveListener(event -> {
-            Status Status = event.getItem();
-            service.update(Status);
+            Department department = event.getItem();
+            service.update(department);
         });
 
         TextField textName = new TextField();
@@ -103,24 +100,24 @@ public class StatusListView extends VerticalLayout {
         binder.forField(textName)
                 .bind("name");
         grid.setColumns("name");
-        List<Grid.Column<Status>> columns = grid.getColumns();
+        List<Grid.Column<Department>> columns = grid.getColumns();
         columns.get(0)
-                .setHeader("Название статуса")
+                .setHeader("Название подразделения")
                 .setEditorComponent(textName);
         columns.forEach(col -> col.setAutoWidth(true));
 
-        grid.setItems(query -> service.statusPage(
+        grid.setItems(query -> service.departmentPage(
                         PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
 
-        // If a row is selected open the Status in the editor
-        grid.addSelectionListener(event -> event.getFirstSelectedItem().ifPresent(Status -> {
+        // If a row is selected open the Department in the editor
+        grid.addSelectionListener(event -> event.getFirstSelectedItem().ifPresent(department -> {
             editor.save();
 
             if (!editor.isOpen()) {
-                grid.getEditor().editItem(Status);
+                grid.getEditor().editItem(department);
 
                 currentColumn.ifPresent(column -> {
                     if (column.getEditorComponent() instanceof Focusable<?> focusable) {
@@ -150,25 +147,25 @@ public class StatusListView extends VerticalLayout {
     }
 
     private Component getToolbar() {
-        addStatusField.setPlaceholder("Подразделение");
-        addStatusField.setValueChangeMode(ValueChangeMode.LAZY);
+        addDepartmentField.setPlaceholder("Подразделение");
+        addDepartmentField.setValueChangeMode(ValueChangeMode.LAZY);
 
-        Button addStatusButton = new Button("Добавить");
-        addStatusButton.addClickListener(click -> addStatus());
+        Button addDepartmentButton = new Button("Добавить");
+        addDepartmentButton.addClickListener(click -> addDepartment());
 
-        Button deleteStatusButton = new Button("Удалить");
-        deleteStatusButton.addClickListener(click -> deleteStatus());
+        Button deleteDepartmentButton = new Button("Удалить");
+        deleteDepartmentButton.addClickListener(click -> deleteDepartment());
 
-        var toolbar = new HorizontalLayout(addStatusField, addStatusButton, deleteStatusButton);
+        var toolbar = new HorizontalLayout(addDepartmentField, addDepartmentButton, deleteDepartmentButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
 
-    private void addStatus() {
+    private void addDepartment() {
         grid.asSingleSelect().clear();
-        saveStatus(addStatusField.getValue());
-        addStatusField.clear();
+        saveDepartment(addDepartmentField.getValue());
+        addDepartmentField.clear();
     }
 
 
