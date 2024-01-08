@@ -1,9 +1,10 @@
 package com.github.partezan7.views;
 
+import com.github.partezan7.data.entity.user.Role;
 import com.github.partezan7.security.SecurityService;
-import com.github.partezan7.views.list.DepartmentListView;
-import com.github.partezan7.views.list.EmployeeListView;
-import com.github.partezan7.views.list.StatusListView;
+import com.github.partezan7.views.list.DepartmentView;
+import com.github.partezan7.views.list.EmployeeView;
+import com.github.partezan7.views.list.StatusView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -42,14 +43,19 @@ public class MainLayout extends AppLayout {
                 LumoUtility.Padding.Horizontal.MEDIUM);
 
         addToNavbar(header);
-
     }
 
     private void createDrawer() {
-        addToDrawer(new VerticalLayout(
-                new RouterLink("Сотрудники", EmployeeListView.class),
-                new RouterLink("Подразделения", DepartmentListView.class),
-                new RouterLink("Статусы", StatusListView.class)
-        ));
+        VerticalLayout leftPupUpMenu = new VerticalLayout(
+                new RouterLink("Сотрудники", EmployeeView.class));
+
+        if (securityService.isUserHaveRights(Role.ADMIN)) {
+            leftPupUpMenu.add(
+                    new RouterLink("Подразделения", DepartmentView.class),
+                    new RouterLink("Статусы", StatusView.class)
+            );
+        }
+
+        addToDrawer(leftPupUpMenu);
     }
 }
