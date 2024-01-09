@@ -135,7 +135,14 @@ public class StatusView extends VerticalLayout {
         });
 
         // Select row on enter
-        Shortcuts.addShortcutListener(grid, event -> currentItem.ifPresent(grid::select), Key.ENTER).listenOn(grid);
+        Shortcuts.addShortcutListener(grid, event -> {
+                    if (editor.isOpen()) {
+                        editor.save();
+                    } else {
+                        currentItem.ifPresent(grid::select);
+                    }
+                }, Key.ENTER)
+                .listenOn(grid);
 
         // Cancel the editor on Escape
         Shortcuts.addShortcutListener(grid, () -> {
