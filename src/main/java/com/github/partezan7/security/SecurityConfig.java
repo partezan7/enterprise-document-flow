@@ -1,8 +1,5 @@
 package com.github.partezan7.security;
 
-import com.github.partezan7.data.entity.User;
-import com.github.partezan7.data.entity.user.Role;
-import com.github.partezan7.data.repository.UserRepository;
 import com.github.partezan7.data.service.UserService;
 import com.github.partezan7.views.LoginView;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
@@ -19,26 +16,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.util.Collections;
-import java.util.Set;
-
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends VaadinWebSecurity {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
-    public SecurityConfig(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
+    public SecurityConfig(UserService userService) {
         this.userService = userService;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth ->
-                auth.requestMatchers(
-                        AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/images/*.png")).permitAll());
+        http.authorizeHttpRequests(auth -> {
+                    var matcher = AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/images/*.png");
+                    auth.requestMatchers(matcher).permitAll();
+                }
+        );
         super.configure(http);
         setLoginView(http, LoginView.class);
     }

@@ -8,18 +8,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * The entry point of the Spring Boot application.
- *
+ * <p>
  * Use the @PWA annotation make the application installable on phones, tablets
  * and some desktop browsers.
- *
  */
 @SpringBootApplication
 @Theme(value = "enterprisedocumentflow")
 @PWA(
         name = "Enterprise document flow",
         shortName = "EDF",
-        offlinePath="offline.html",
-        offlineResources = { "images/offline.png" }
+        offlinePath = "offline.html",
+        offlineResources = {"images/offline.png"}
 )
 public class Application implements AppShellConfigurator {
 

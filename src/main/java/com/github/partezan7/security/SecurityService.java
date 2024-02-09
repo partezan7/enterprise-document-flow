@@ -30,18 +30,17 @@ public class SecurityService {
     }
 
     public boolean isUserHaveRights(Role role) {
-        UserDetails userDetails = getAuthenticatedUser();
-
         try {
-            User user = (User) userService
-                    .loadUserByUsername(userDetails
-                            .getUsername());
+            UserDetails userDetails = getAuthenticatedUser();
+            String username = userDetails.getUsername();
+            User user = (User) userService.loadUserByUsername(username);
             Set<Role> roles = user.getRoles();
             return roles.contains(role);
         } catch (UsernameNotFoundException exception) {
             logout();
-            // TODO: 24.11.2023 need to notify the user that the given username is not found in the database  
+            // TODO: 24.11.2023 need to notify the user that the given username is not found in the database
             return false;
         }
+
     }
 }
